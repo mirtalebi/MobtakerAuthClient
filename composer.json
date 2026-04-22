@@ -18,7 +18,12 @@
     "require": {
         "php": "^8.4",
         "spatie/laravel-package-tools": "^1.16",
-        "illuminate/contracts": "^11.0||^12.0||^13.0"
+        "illuminate/contracts": "^11.0||^12.0||^13.0",
+        "laravel/framework": "^11.0||^12.0||^13.0",
+        "laravel/socialite": "^5.10",
+        "guzzlehttp/guzzle": "^7.8",
+        "spatie/laravel-query-builder": "^6.0",
+        "orchestra/database": "^10.0.0||^9.0.0"
     },
     "require-dev": {
         "laravel/pint": "^1.14",
@@ -30,13 +35,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Mobtaker System\\SsoClient\\": "src/",
-            "Mobtaker System\\SsoClient\\Database\\Factories\\": "database/factories/"
+            "MobtakerSystem\\SsoClient\\": "src/",
+            "MobtakerSystem\\SsoClient\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Mobtaker System\\SsoClient\\Tests\\": "tests/",
+            "MobtakerSystem\\SsoClient\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
