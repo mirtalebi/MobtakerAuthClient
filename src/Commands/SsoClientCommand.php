@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Mobtaker System\SsoClient\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class SsoClientCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'sso-client';
 
     public $description = 'My command';
 
