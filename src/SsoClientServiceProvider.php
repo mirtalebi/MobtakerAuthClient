@@ -26,24 +26,25 @@ class SsoClientServiceProvider extends PackageServiceProvider
         $this->app->singleton(\MobtakerSystem\SsoClient\SsoClient::class, function () {
             return new \MobtakerSystem\SsoClient\SsoClient();
         });
-
-        // Register custom Socialite driver
-        Socialite::extend('mobtaker-sso', function ($app) {
-            $config = config('sso-client.provider');
-
-            return Socialite::buildProvider(
-                MobtakerSsoProvider::class,
-                [
-                    'client_id' => $config['client_id'],
-                    'client_secret' => $config['client_secret'],
-                    'redirect_uri' => $config['redirect_uri'],
-                ]
-            );
-        });
     }
 
     public function bootingPackage(): void
     {
+        if ($this->app->bound(\Laravel\Socialite\Contracts\Factory::class)) {
+            Socialite::extend('mobtaker-sso', function ($app) {
+                $config = config('sso-client.provider');
+
+                return Socialite::buildProvider(
+                    MobtakerSsoProvider::class,
+                    [
+                        'client_id' => $config['client_id'],
+                        'client_secret' => $config['client_secret'],
+                        'redirect' => $config['redirect_uri'],
+                    ]
+                );
+            });
+        }
+
         // Load routes
         $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
 

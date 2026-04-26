@@ -56,7 +56,7 @@ The published configuration file (`config/sso-client.php`) contains detailed opt
 'sync' => [
     'enabled' => true,
     'user_fields' => [
-        'email' => 'email',
+        'mobile' => 'mobile',
         'name' => 'name',
         'phone' => 'phone',
         'avatar' => 'avatar',
@@ -184,7 +184,7 @@ Customize which SSO fields are synced to local user table:
 
 ```php
 'user_fields' => [
-    'email' => 'email',         // SSO field => Local field
+    'mobile' => 'mobile',         // SSO field => Local field
     'name' => 'name',
     'phone' => 'phone',
     'avatar' => 'avatar',
@@ -287,7 +287,7 @@ Auth::login($user);
 
 1. Check `sync.enabled` is `true` in config
 2. Review sync field mapping in config
-3. Check user email field in SSO response
+3. Check user mobile field in SSO response
 4. Run `php artisan sso:sync --all` for manual sync
 
 ### Token Issues

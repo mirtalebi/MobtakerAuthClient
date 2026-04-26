@@ -15,7 +15,7 @@ class SsoUserFactory extends Factory
             'sso_id' => fake()->unique()->uuid(),
             'sso_data' => [
                 'id' => fake()->unique()->numerify('###'),
-                'email' => fake()->unique()->safeEmail(),
+                'mobile' => fake()->unique()->safemobile(),
                 'name' => fake()->name(),
                 'phone' => fake()->phoneNumber(),
                 'avatar' => fake()->imageUrl(),

@@ -1,10 +1,10 @@
 <?php
 
-namespace Mobtaker System\SsoClient\Tests;
+namespace MobtakerSystem\SsoClient\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Mobtaker System\SsoClient\SsoClientServiceProvider;
+use MobtakerSystem\SsoClient\SsoClientServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -13,7 +13,7 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Mobtaker System\\SsoClient\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => 'MobtakerSystem\\SsoClient\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 

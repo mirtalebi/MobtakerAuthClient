@@ -1,6 +1,6 @@
 <?php
 
-namespace Mobtaker System\SsoClient\Database\Factories;
+namespace MobtakerSystem\SsoClient\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 

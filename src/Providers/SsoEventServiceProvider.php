@@ -27,12 +27,12 @@ class SsoEventServiceProvider extends ServiceProvider
             // Log user authentication
             \Log::info('User authenticated via SSO', [
                 'user_id' => $event->user->id ?? null,
-                'email' => $event->user->email ?? null,
+                'mobile' => $event->user->mobile ?? null,
                 'sso_id' => $event->socialiteUser->getId() ?? null,
             ]);
 
             // Dispatch custom logic here
-            // Example: Update user last login, send email, etc.
+            // Example: Update user last login, send mobile, etc.
         });
 
         // Listen to user sync event
@@ -40,7 +40,7 @@ class SsoEventServiceProvider extends ServiceProvider
             // Log user sync
             \Log::info('User synced from SSO', [
                 'user_id' => $event->user->id ?? null,
-                'email' => $event->user->email ?? null,
+                'mobile' => $event->user->mobile ?? null,
             ]);
 
             // Dispatch custom logic here

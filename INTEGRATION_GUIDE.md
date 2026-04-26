@@ -54,7 +54,7 @@ Ensure your `User` model is in the configured location:
 
 The User model should have these fields:
 - `id` (primary key)
-- `email` (unique)
+- `mobile` (unique)
 - `name`
 - `password`
 - And any fields you configured in `sync.user_fields`
@@ -162,7 +162,7 @@ class LogUserAuthentication
     {
         \Log::info('User authenticated via SSO', [
             'user_id' => $event->user->id,
-            'email' => $event->user->email,
+            'mobile' => $event->user->mobile,
             'time' => now(),
         ]);
     }
@@ -201,7 +201,7 @@ Customize which SSO fields sync to your user table in `config/sso-client.php`:
 ```php
 'sync' => [
     'user_fields' => [
-        'email' => 'email',
+        'mobile' => 'mobile',
         'name' => 'full_name',        // SSO 'name' → Local 'full_name'
         'phone' => 'phone_number',    // SSO 'phone' → Local 'phone_number'
         'avatar' => 'profile_photo',  // Custom mapping
@@ -214,7 +214,7 @@ Your User migration should have these fields:
 ```php
 Schema::create('users', function (Blueprint $table) {
     $table->id();
-    $table->string('email')->unique();
+    $table->string('mobile')->unique();
     $table->string('full_name');
     $table->string('phone_number')->nullable();
     $table->string('profile_photo')->nullable();

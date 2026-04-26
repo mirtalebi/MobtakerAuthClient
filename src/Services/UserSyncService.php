@@ -12,7 +12,7 @@ class UserSyncService
      */
     public function sync($socialiteUser)
     {
-        $ssoUserData = $socialiteUser->getRaw();
+        $ssoUserData = $socialiteUser->getRaw()['options'];
 
         return $this->syncFromSsoData($ssoUserData, $socialiteUser->token);
     }
@@ -20,15 +20,14 @@ class UserSyncService
     /**
      * Sync user from SSO data array
      */
-    public function syncFromSsoData(array $ssoUserData, ?string $token = null): bool
+    public function syncFromSsoData(array $ssoUserData, ?string $token = null)
     {
         if (!config('sso-client.sync.enabled')) {
-            return false;
+            return null;
         }
 
         $userModel = config('sso-client.user.model');
         $syncFieldsMap = config('sso-client.sync.user_fields');
-
         // Find or create SSO user record
         $ssoUser = SsoUser::firstOrCreate(
             ['sso_id' => $ssoUserData['id']],
@@ -42,8 +41,8 @@ class UserSyncService
         // Prepare local user data
         $localUserData = $this->mapSsoDataToLocalUser($ssoUserData, $syncFieldsMap);
 
-        // Find local user by email
-        $user = $userModel::where('email', $ssoUserData['email'] ?? null)->first();
+        // Find local user by mobile
+        $user = $userModel::where('mobile', $ssoUserData['mobile'] ?? null)->first();
 
         if ($user) {
             // Update existing user
@@ -59,7 +58,7 @@ class UserSyncService
 
                 $user = $userModel::create($localUserData);
             } else {
-                return false;
+                return null;
             }
         }
 
@@ -69,7 +68,7 @@ class UserSyncService
             $ssoUser->save();
         }
 
-        return true;
+        return $user;
     }
 
     /**

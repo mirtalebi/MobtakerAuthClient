@@ -51,7 +51,7 @@ return [
 
         // Fields to sync from SSO server to local user table
         'user_fields' => [
-            'email' => 'email',
+            'mobile' => 'mobile',
             'name' => 'name',
             'phone' => 'phone',
             'avatar' => 'avatar',
@@ -118,12 +118,6 @@ return [
         'user_sync_on_middleware' => false,
         'remember_device' => false,
     ],
-];
-        'host' => env('SSO_HOST', 'http://localhost:8000'),
-        'authorize_endpoint' => env('SSO_AUTHORIZE_ENDPOINT', '/oauth/authorize'),
-        'token_endpoint' => env('SSO_TOKEN_ENDPOINT', '/oauth/token'),
-        'user_endpoint' => env('SSO_USER_ENDPOINT', '/api/user'),
-    ],
 
     /**
      * Authentication Driver Configuration
@@ -167,7 +161,7 @@ return [
          */
         'fields_mapping' => [
             'id' => 'remote_id',
-            'email' => 'email',
+            'mobile' => 'mobile',
             'name' => 'name',
             'phone' => 'phone',
             'avatar' => 'avatar',

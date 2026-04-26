@@ -35,7 +35,7 @@ Use this checklist when implementing MobtakerSystem SSO Client in your Laravel a
 - [ ] Verify User model location in `config/sso-client.php`
 - [ ] Review and adjust field mapping in `config/sso-client.php` under `sync.user_fields`
 - [ ] Check user table has required columns:
-  - [ ] `email` (indexed, unique)
+  - [ ] `mobile` (indexed, unique)
   - [ ] `name`
   - [ ] `password`
   - [ ] Other fields from `user_fields` mapping

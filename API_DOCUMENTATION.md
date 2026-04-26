@@ -58,7 +58,7 @@ Accept: application/json
 ```json
 {
     "id": 1,
-    "email": "user@example.com",
+    "mobile": "user@example.com",
     "name": "John Doe",
     "phone": "+1234567890",
     "mobile": "+1234567890",
@@ -122,7 +122,7 @@ $userInfo = SsoClient::getUserInfo();
 ```php
 [
     'id' => 1,
-    'email' => 'user@example.com',
+    'mobile' => 'user@example.com',
     'name' => 'John Doe',
     'phone' => '+1234567890',
     'avatar' => 'https://...',
@@ -153,7 +153,7 @@ $token = SsoClient::getAccessToken();
 
 #### storeAccessToken($token)
 
-Store OAuth2 access token.
+Store OAuth2 access token.V
 
 ```php
 SsoClient::storeAccessToken($token);
@@ -221,7 +221,7 @@ Sync user from SSO data array.
 ```php
 $ssoData = [
     'id' => 1,
-    'email' => 'user@example.com',
+    'mobile' => 'user@example.com',
     'name' => 'John Doe',
     'phone' => '+1234567890',
 ];
@@ -281,7 +281,7 @@ $ssoData = $syncService->getSsoUserData(1);
 ```php
 [
     'id' => 1,
-    'email' => 'user@example.com',
+    'mobile' => 'user@example.com',
     'name' => 'John Doe',
     'phone' => '+1234567890',
     'avatar' => 'https://...',

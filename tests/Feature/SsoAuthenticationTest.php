@@ -24,7 +24,7 @@ class SsoAuthenticationTest extends TestCase
     {
         $ssoData = [
             'id' => 1,
-            'email' => 'test@example.com',
+            'mobile' => 'test@example.com',
             'name' => 'Test User',
             'phone' => '1234567890',
         ];

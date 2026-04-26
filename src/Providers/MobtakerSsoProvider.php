@@ -5,6 +5,7 @@ namespace MobtakerSystem\SsoClient\Providers;
 use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\ProviderInterface;
 use Laravel\Socialite\Two\User;
+use MobtakerSystem\SsoClient\Facades\SsoClient;
 
 class MobtakerSsoProvider extends AbstractProvider implements ProviderInterface
 {
@@ -17,7 +18,7 @@ class MobtakerSsoProvider extends AbstractProvider implements ProviderInterface
      */
     protected function getAuthUrl($state): string
     {
-        return $this->buildAuthUrlWithBase(
+        return $this->buildAuthUrlFromBase(
             config('sso-client.provider.host') . config('sso-client.provider.authorize_url'),
             $state
         );
@@ -58,7 +59,7 @@ class MobtakerSsoProvider extends AbstractProvider implements ProviderInterface
             'id' => $user['id'] ?? null,
             'nickname' => $user['username'] ?? null,
             'name' => $user['name'] ?? null,
-            'email' => $user['email'] ?? null,
+            'mobile' => $user['mobile'] ?? null,
             'avatar' => $user['avatar'] ?? null,
             'phone' => $user['phone'] ?? null,
             'mobile' => $user['mobile'] ?? null,
@@ -71,9 +72,8 @@ class MobtakerSsoProvider extends AbstractProvider implements ProviderInterface
     public function getAccessTokenResponse($code)
     {
         $response = $this->getHttpClient()->post($this->getTokenUrl(), [
+            'auth' => [$this->clientId, $this->clientSecret],
             'form_params' => [
-                'client_id' => $this->clientId,
-                'client_secret' => $this->clientSecret,
                 'code' => $code,
                 'redirect_uri' => $this->redirectUrl,
                 'grant_type' => 'authorization_code',

@@ -115,7 +115,7 @@ Event::listen(UserSynced::class, function ($event) {
 // Field mapping
 'sync' => [
     'user_fields' => [
-        'email' => 'email',
+        'mobile' => 'mobile',
         'name' => 'name',
         'phone' => 'phone',
     ]
@@ -284,7 +284,7 @@ Event::listen(UserSynced::class, function ($event) {
     $event->user->assignRole('user');
     
     // Log activity
-    activity()->log("User synced: {$event->user->email}");
+    activity()->log("User synced: {$event->user->mobile}");
 });
 ```
 

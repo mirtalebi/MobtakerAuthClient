@@ -52,7 +52,7 @@ php artisan vendor:publish --tag="sso-client-views"
 ## Usage
 
 ```php
-$ssoClient = new Mobtaker System\SsoClient();
+$ssoClient = new MobtakerSystem\SsoClient();
 echo $ssoClient->echoPhrase('Hello, Mobtaker System!');
 ```
 

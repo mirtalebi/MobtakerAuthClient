@@ -187,7 +187,7 @@ Main configuration options in `config/sso-client.php`:
     'sync' => [                                 // User sync settings
         'enabled' => true,
         'user_fields' => [
-            'email' => 'email',
+            'mobile' => 'mobile',
             'name' => 'name',
             'phone' => 'phone',
         ],
@@ -322,7 +322,7 @@ Event::listen(UserAuthenticated::class, function ($event) {
 ### Custom Event Handler
 ```php
 Event::listen(UserSynced::class, function ($event) {
-    // Assign roles, send emails, etc.
+    // Assign roles, send mobiles, etc.
     $event->user->assignRole('user');
 });
 ```

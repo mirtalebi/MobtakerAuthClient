@@ -54,17 +54,11 @@ class SsoClient
     public function processUser($socialiteUser)
     {
         // Sync user data from SSO server
-        if (config('sso-client.sync.enabled')) {
+        if (config('sso-client.sync.enabled', true)) {
             $user = $this->syncService->sync($socialiteUser);
 
-            // Cache the access token
-            if (config('sso-client.cache.enabled')) {
-                Cache::put(
-                    config('sso-client.cache.prefix') . auth()->id(),
-                    $socialiteUser->token,
-                    config('sso-client.cache.ttl')
-                );
-            }
+            // Store the access token in session and cache when possible
+            $this->storeAccessToken($socialiteUser->token);
 
             event(new UserAuthenticated($user, $socialiteUser));
             event(new UserSynced($user, $socialiteUser));
@@ -128,9 +122,13 @@ class SsoClient
     public function getAccessToken(): ?string
     {
         if (config('sso-client.cache.enabled') && auth()->check()) {
-            return Cache::get(
+            $token = Cache::get(
                 config('sso-client.cache.prefix') . auth()->id()
             );
+
+            if ($token) {
+                return $token;
+            }
         }
 
         return session(config('sso-client.session.sso_token_key'));

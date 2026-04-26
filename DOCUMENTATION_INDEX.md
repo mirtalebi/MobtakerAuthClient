@@ -303,7 +303,7 @@ With these 11 comprehensive documentation files, you have everything needed to:
 
 - **GitHub**: https://github.com/mobtaker-system/sso-client
 - **Package**: mobtaker-system/sso-client on Packagist
-- **Email**: support@mobtaker-system.com
+- **mobile**: support@mobtaker-system.com
 - **Docs**: All 11 files in this repository
 
 ---
