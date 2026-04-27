@@ -42,7 +42,7 @@ class UserSyncService
         $localUserData = $this->mapSsoDataToLocalUser($ssoUserData, $syncFieldsMap);
 
         // Find local user by mobile
-        $user = $userModel::where('mobile', $ssoUserData['mobile'] ?? null)->first();
+        $user = $userModel::where($syncFieldsMap['mobile'], $ssoUserData['mobile'] ?? null)->first();
 
         if ($user) {
             // Update existing user

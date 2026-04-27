@@ -43,35 +43,6 @@ return [
     ],
 
     /**
-     * User Synchronization Configuration
-     */
-    'sync' => [
-        // Enable automatic user sync on login
-        'enabled' => true,
-
-        // Fields to sync from SSO server to local user table
-        'user_fields' => [
-            'mobile' => 'mobile',
-            'name' => 'name',
-            'phone' => 'phone',
-            'avatar' => 'avatar',
-            'mobile' => 'mobile',
-        ],
-
-        // Create user if not exists
-        'create_user' => true,
-
-        // Update user on every sync
-        'update_user' => true,
-
-        // Generate password for new users
-        'generate_password' => true,
-
-        // Event to dispatch after sync
-        'dispatch_events' => true,
-    ],
-
-    /**
      * Session Configuration
      */
     'session' => [
@@ -134,6 +105,31 @@ return [
      * User Synchronization Configuration
      */
     'sync' => [
+        // Enable automatic user sync on login
+        'enabled' => true,
+
+        // Fields to sync from SSO server to local user table
+        'user_fields' => [
+            'mobile' => 'mobile',
+            'first_name' => 'first_name',
+            'last_name' => 'last_name'
+        ],
+
+        // redirect link after authentication
+        'redirect_link' => '/api/auth/sso/callback',
+
+        // Create user if not exists
+        'create_user' => true,
+
+        // Update user on every sync
+        'update_user' => true,
+
+        // Generate password for new users
+        'generate_password' => true,
+
+        // Event to dispatch after sync
+        'dispatch_events' => true,
+
         /**
          * Enable automatic user synchronization on login
          */

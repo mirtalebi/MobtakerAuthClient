@@ -28,7 +28,7 @@ class SsoAuthController extends Controller
 
         auth()->login($user, true);
 
-        return redirect(config('sso-client.endpoints.login') === '/auth/sso/login' ? '/' : '/dashboard');
+        return redirect(config('sso-client.sync.redirect_link', '/'));
     }
 
     /**
