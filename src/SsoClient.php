@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use Laravel\Socialite\Facades\Socialite;
 use MobtakerSystem\SsoClient\Events\UserAuthenticated;
 use MobtakerSystem\SsoClient\Events\UserSynced;
+use MobtakerSystem\SsoClient\Models\SsoUser;
 use MobtakerSystem\SsoClient\Services\UserSyncService;
 
 class SsoClient
@@ -145,6 +146,15 @@ class SsoClient
                 $token,
                 config('sso-client.cache.ttl')
             );
+        }
+        if (config('sso-client.tokens.store_tokens', true)) {
+            // Store token in database if user is authenticated
+            if (auth()->check()) {
+                $ssoUser = SsoUser::where('user_id', auth()->id())->first();
+                if ($ssoUser) {
+                    $ssoUser->update(['token' => $token]);
+                }
+            }
         }
 
         session([config('sso-client.session.sso_token_key') => $token]);
