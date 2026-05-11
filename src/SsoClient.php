@@ -122,6 +122,16 @@ class SsoClient
      */
     public function getAccessToken(): ?string
     {
+        if (config('sso-client.tokens.store_tokens', true)) {
+            // Store token in database if user is authenticated
+            if (auth()->check()) {
+                $ssoUser = SsoUser::where('user_id', auth()->id())->first();
+                if ($ssoUser && $ssoUser->token) {
+                    return $ssoUser->token;
+                }
+            }
+        }
+
         if (config('sso-client.cache.enabled') && auth()->check()) {
             $token = Cache::get(
                 config('sso-client.cache.prefix') . auth()->id()
