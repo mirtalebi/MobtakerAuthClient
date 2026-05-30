@@ -117,6 +117,7 @@ return [
 
         // redirect link after authentication
         'redirect_link' => '/api/auth/sso/callback',
+        'failed_redirect_link' => '/api/auth/sso/callback',
 
         // Create user if not exists
         'create_user' => true,

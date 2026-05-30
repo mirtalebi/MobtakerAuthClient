@@ -23,7 +23,7 @@ class SsoAuthController extends Controller
         $user = SsoClient::handleCallback();
 
         if (!$user) {
-            return redirect('/login')->with('error', 'SSO authentication failed');
+            return redirect(config('sso-client.sync.failed_redirect_link', '/'))->withErrors(['message' => 'Failed to authenticate with SSO']);
         }
 
         auth()->login($user, true);
