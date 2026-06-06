@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Http\Request;
+use MobtakerSystem\SsoClient\Models\SsoUser;
 
 class SsoJwtGuard implements Guard
 {
@@ -57,7 +58,7 @@ class SsoJwtGuard implements Guard
         }
 
         $this->claims = $claims;
-        $this->user = $this->provider->retrieveById($claims[$this->jwtConfig['sub']]);
+        $this->user = $this->resolveUserBySsoId($claims[$this->jwtConfig['sub']]);
 
         return $this->user;
     }
@@ -81,7 +82,7 @@ class SsoJwtGuard implements Guard
             return false;
         }
 
-        $user = $this->provider->retrieveById($claims[$this->jwtConfig['sub']]);
+        $user = $this->resolveUserBySsoId($claims[$this->jwtConfig['sub']]);
 
         if (!$user) {
             return false;
@@ -210,6 +211,23 @@ class SsoJwtGuard implements Guard
         }
 
         return false;
+    }
+
+    protected function resolveUserBySsoId(mixed $ssoId): ?Authenticatable
+    {
+        $ssoUserModel = config('sso-client.sso_user.model', SsoUser::class);
+        $ssoUser = $ssoUserModel::where('sso_id', $ssoId)->first();
+
+        if ($ssoUser && method_exists($ssoUser, 'user')) {
+            return $ssoUser->user;
+        }
+
+        // Fallback to local provider lookup when the claim is a local ID.
+        if (is_scalar($ssoId)) {
+            return $this->provider->retrieveById($ssoId);
+        }
+
+        return null;
     }
 
     protected function base64UrlDecode(string $value): string|false

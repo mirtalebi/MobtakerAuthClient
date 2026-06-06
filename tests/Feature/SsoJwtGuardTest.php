@@ -2,29 +2,57 @@
 
 namespace MobtakerSystem\SsoClient\Tests\Feature;
 
-use Illuminate\Auth\GenericUser;
+use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use MobtakerSystem\SsoClient\Auth\Guards\SsoJwtGuard;
+use MobtakerSystem\SsoClient\Models\SsoUser;
 use MobtakerSystem\SsoClient\Tests\TestCase;
 
 class SsoJwtGuardTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
+
+        Schema::create('sso_users', function (Blueprint $table) {
+            $table->id();
+            $table->string('sso_id');
+            $table->unsignedBigInteger('user_id');
+            $table->json('sso_data')->nullable();
+            $table->string('token')->nullable();
+            $table->timestamps();
+        });
+
+        config()->set('sso-client.user.model', TestUser::class);
+        config()->set('sso-client.sso_user.model', SsoUser::class);
+    }
+
     public function test_jwt_guard_resolves_user_from_valid_bearer_token(): void
     {
-        $user = new GenericUser(['id' => 123, 'name' => 'Test User']);
-        $provider = new class($user) implements UserProvider {
-            private Authenticatable $user;
+        $user = TestUser::create(['name' => 'Test User']);
+        SsoUser::create([
+            'sso_id' => '123',
+            'user_id' => $user->id,
+            'sso_data' => ['id' => '123'],
+            'token' => null,
+        ]);
 
-            public function __construct(Authenticatable $user)
-            {
-                $this->user = $user;
-            }
-
+        $provider = new class implements UserProvider {
             public function retrieveById($identifier): ?Authenticatable
             {
-                return $this->user->getAuthIdentifier() == $identifier ? $this->user : null;
+                return null;
             }
 
             public function retrieveByToken($identifier, $token): ?Authenticatable
@@ -53,7 +81,7 @@ class SsoJwtGuardTest extends TestCase
             }
         };
 
-        $token = $this->createJwtToken(['sub' => 123, 'exp' => time() + 3600], 'secret-key');
+        $token = $this->createJwtToken(['sub' => '123', 'exp' => time() + 3600], 'secret-key');
         $request = Request::create('/test', 'GET', [], [], [], ['HTTP_AUTHORIZATION' => 'Bearer ' . $token]);
 
         $guard = new SsoJwtGuard($provider, $request, [
@@ -65,24 +93,16 @@ class SsoJwtGuardTest extends TestCase
         ]);
 
         $this->assertTrue($guard->check());
-        $this->assertSame(123, $guard->id());
-        $this->assertSame($user, $guard->user());
+        $this->assertSame($user->id, $guard->id());
+        $this->assertTrue($guard->user()->is($user));
     }
 
     public function test_jwt_guard_rejects_invalid_token(): void
     {
-        $user = new GenericUser(['id' => 123, 'name' => 'Test User']);
-        $provider = new class($user) implements UserProvider {
-            private Authenticatable $user;
-
-            public function __construct(Authenticatable $user)
-            {
-                $this->user = $user;
-            }
-
+        $provider = new class implements UserProvider {
             public function retrieveById($identifier): ?Authenticatable
             {
-                return $this->user->getAuthIdentifier() == $identifier ? $this->user : null;
+                return null;
             }
 
             public function retrieveByToken($identifier, $token): ?Authenticatable
@@ -141,4 +161,12 @@ class SsoJwtGuardTest extends TestCase
     {
         return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
     }
+}
+
+class TestUser extends Model implements Authenticatable
+{
+    use AuthenticatableTrait;
+
+    protected $table = 'users';
+    protected $guarded = [];
 }

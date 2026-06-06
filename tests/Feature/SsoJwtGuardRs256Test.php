@@ -2,30 +2,62 @@
 
 namespace MobtakerSystem\SsoClient\Tests\Feature;
 
-use Illuminate\Auth\GenericUser;
+use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use MobtakerSystem\SsoClient\Auth\Guards\SsoJwtGuard;
+use MobtakerSystem\SsoClient\Models\SsoUser;
 use MobtakerSystem\SsoClient\Tests\TestCase;
 
 class SsoJwtGuardRs256Test extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
+
+        Schema::create('sso_users', function (Blueprint $table) {
+            $table->id();
+            $table->string('sso_id');
+            $table->unsignedBigInteger('user_id');
+            $table->json('sso_data')->nullable();
+            $table->string('token')->nullable();
+            $table->timestamps();
+        });
+
+        config()->set('sso-client.user.model', RsTestUser::class);
+        config()->set('sso-client.sso_user.model', SsoUser::class);
+    }
+
     public function test_rs256_guard_resolves_user_from_valid_bearer_token(): void
     {
-        $user = new GenericUser(['id' => 321, 'name' => 'RSA User']);
+        $user = RsTestUser::create(['name' => 'RSA User']);
 
-        $provider = new class($user) implements UserProvider {
-            private Authenticatable $user;
+        SsoUser::create([
+            'sso_id' => '321',
+            'user_id' => $user->id,
+            'sso_data' => ['id' => '321'],
+            'token' => null,
+        ]);
 
-            public function __construct(Authenticatable $user)
-            {
-                $this->user = $user;
-            }
-
+        $provider = new class implements UserProvider {
             public function retrieveById($identifier): ?Authenticatable
             {
-                return $this->user->getAuthIdentifier() == $identifier ? $this->user : null;
+                return null;
+            }
+
+            public function retrieveByToken($identifier, $token): ?Authenticatable
+            {
+                return null;
             }
 
             public function retrieveByToken($identifier, $token): ?Authenticatable
@@ -73,8 +105,8 @@ class SsoJwtGuardRs256Test extends TestCase
         ]);
 
         $this->assertTrue($guard->check());
-        $this->assertSame(321, $guard->id());
-        $this->assertSame($user, $guard->user());
+        $this->assertSame($user->id, $guard->id());
+        $this->assertTrue($guard->user()->is($user));
     }
 
     private function createRsJwtToken(array $claims, string $privateKey, int $opensslAlg): string
@@ -96,4 +128,12 @@ class SsoJwtGuardRs256Test extends TestCase
     {
         return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
     }
+}
+
+class RsTestUser extends Model implements Authenticatable
+{
+    use AuthenticatableTrait;
+
+    protected $table = 'users';
+    protected $guarded = [];
 }
