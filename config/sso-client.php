@@ -99,6 +99,17 @@ return [
         'session_name' => 'sso_auth',
         'remember_token' => true,
         'remember_duration' => 30, // days
+        'jwt' => [
+            'secret' => env('SSO_JWT_SECRET'),
+            'algorithm' => env('SSO_JWT_ALGORITHM', 'HS256'),
+            'header' => env('SSO_JWT_HEADER', 'Authorization'),
+            'prefix' => env('SSO_JWT_PREFIX', 'Bearer'),
+            'sub' => env('SSO_JWT_SUB', 'sub'),
+            // For RSA (RS256/RS384/RS512) verification you can provide the public key
+            // directly or the path to a PEM file containing the public key.
+            'public_key' => env('SSO_JWT_PUBLIC_KEY'),
+            'public_key_path' => env('SSO_JWT_PUBLIC_KEY_PATH'),
+        ],
     ],
 
     /**

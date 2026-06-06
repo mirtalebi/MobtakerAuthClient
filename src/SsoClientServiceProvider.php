@@ -4,6 +4,8 @@ namespace MobtakerSystem\SsoClient;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Illuminate\Support\Facades\Auth;
+use MobtakerSystem\SsoClient\Auth\Guards\SsoJwtGuard;
 use MobtakerSystem\SsoClient\Commands\SsoClientCommand;
 use MobtakerSystem\SsoClient\Providers\MobtakerSsoProvider;
 use Laravel\Socialite\Facades\Socialite;
@@ -41,6 +43,18 @@ class SsoClientServiceProvider extends PackageServiceProvider
                         'client_secret' => $config['client_secret'],
                         'redirect' => $config['redirect_uri'],
                     ]
+                );
+            });
+        }
+
+        if ($this->app->bound('auth')) {
+            Auth::extend('sso-jwt', function ($app, string $name, array $config) {
+                $provider = Auth::createUserProvider($config['provider'] ?? 'users');
+
+                return new SsoJwtGuard(
+                    $provider,
+                    $app['request'],
+                    config('sso-client.auth.jwt', [])
                 );
             });
         }

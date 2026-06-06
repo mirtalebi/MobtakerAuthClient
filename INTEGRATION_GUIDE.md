@@ -147,7 +147,56 @@ Route::middleware(['auth', EnsureSsoAuthenticated::class])->group(function () {
 });
 ```
 
-### 9. Listen to SSO Events
+### 9. Configure JWT Guard
+
+If your application issues JWTs for API access, configure the package guard in `config/auth.php`:
+
+```php
+'guards' => [
+    'sso-jwt' => [
+        'driver' => 'sso-jwt',
+        'provider' => 'users',
+    ],
+],
+
+'providers' => [
+    'users' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\User::class,
+    ],
+],
+```
+
+Then set the JWT settings in your `.env` file:
+
+```env
+SSO_JWT_SECRET=your_app_jwt_secret
+SSO_JWT_ALGORITHM=HS256
+SSO_JWT_HEADER=Authorization
+SSO_JWT_PREFIX=Bearer
+SSO_JWT_SUB=sub
+# For RS* algorithms provide the public key (PEM) or a path to the PEM file
+SSO_JWT_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----"
+SSO_JWT_PUBLIC_KEY_PATH=/path/to/public.pem
+```
+
+Protect API routes with the new guard:
+
+```php
+Route::middleware(['auth:sso-jwt'])->group(function () {
+    Route::get('/api/user', function () {
+        return auth()->user();
+    });
+});
+```
+
+Requests must send a valid bearer token header:
+
+```http
+Authorization: Bearer {jwt_token}
+```
+
+### 10. Listen to SSO Events
 
 Create an event listener in `app/Listeners/`:
 

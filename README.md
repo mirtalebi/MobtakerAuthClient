@@ -56,6 +56,49 @@ $ssoClient = new MobtakerSystem\SsoClient();
 echo $ssoClient->echoPhrase('Hello, Mobtaker System!');
 ```
 
+## JWT Guard
+
+The package now provides a custom `sso-jwt` authentication guard for validating app-issued JWT bearer tokens.
+
+1. Add the guard to `config/auth.php`:
+
+```php
+'guards' => [
+    'sso-jwt' => [
+        'driver' => 'sso-jwt',
+        'provider' => 'users',
+    ],
+],
+```
+
+2. Set the JWT secret and algorithm in `.env`:
+
+```env
+SSO_JWT_SECRET=your-app-jwt-secret   # for HS* algorithms
+SSO_JWT_ALGORITHM=HS256
+// For RS* algorithms (RS256/RS384/RS512) provide the public key or a path to it:
+SSO_JWT_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----"
+SSO_JWT_PUBLIC_KEY_PATH=/path/to/public.pem
+```
+
+3. Protect API routes using the guard:
+
+```php
+Route::middleware(['auth:sso-jwt'])->group(function () {
+    Route::get('/api/profile', function () {
+        return auth()->user();
+    });
+});
+```
+
+4. Authenticate requests with the bearer token header:
+
+```http
+Authorization: Bearer {jwt_token}
+```
+
+The JWT guard validates the token signature and expiry, then loads the local user using the token `sub` claim.
+
 ## Testing
 
 ```bash
